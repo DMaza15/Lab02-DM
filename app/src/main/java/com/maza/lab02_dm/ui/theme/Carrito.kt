@@ -45,4 +45,16 @@ fun mostrarDetalle(productos: List<Producto>) {
         i++
     }
     println("------------------------------------------")
+
+ val masCaro = carrito.maxByOrNull { it.precio }
+ if (masCaro != null){
+     println("Producto mas caro: ${masCaro.nombre} " + String.format("(S/%.2f", masCaro.precio))
+ val descuento = calcularDescuento(total)
+ if (descuento > 0.0){
+     println("Descuento aplicado: 5% por compra mayor a S/ 3000")
+ val totalConDescuento = total - descuento
+ println(String.format("TOTAL CON DESCUENTO   : S/ %7.2f", totalConDescuento))
+ println("\nGracias por su compra, $nombreCliente")
+ }
+ }
 }
