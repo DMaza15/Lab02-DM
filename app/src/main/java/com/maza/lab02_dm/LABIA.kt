@@ -85,3 +85,47 @@ class ProductoRopa(
 
     override fun calcularImpuesto(): Double = calcularSubtotal() * 0.18
 }
+
+class ProductoElectronico(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val garantiaMeses: Int
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = calcularSubtotal() * 0.18
+
+    // POLIMORFISMO: personaliza mostrarInfo() reutilizando
+    // la versión del padre con super.mostrarInfo()
+    override fun mostrarInfo(): String {
+        return super.mostrarInfo() + "  [Garantia: $garantiaMeses meses]"
+    }
+}
+
+class ProductoAlimento(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val fechaVencimiento: String
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = 0.0
+
+    override fun mostrarInfo(): String {
+        return super.mostrarInfo() + "  [Vence: $fechaVencimiento]"
+    }
+}
+
+class ProductoRopa(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val talla: String
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = calcularSubtotal() * 0.18
+
+    override fun mostrarInfo(): String {
+        return super.mostrarInfo() + "  [Talla: $talla]"
+    }
+}
