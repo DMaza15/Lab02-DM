@@ -129,3 +129,37 @@ class ProductoRopa(
         return super.mostrarInfo() + "  [Talla: $talla]"
     }
 }
+// -------------------------------------------------------
+// Clase Carrito: administra la colección de productos.
+// También aplica ENCAPSULAMIENTO (la lista es privada).
+// -------------------------------------------------------
+class Carrito {
+
+    private val productos = mutableListOf<Producto>()
+
+    fun agregarProducto(p: Producto) {
+        productos.add(p)
+        println("Producto agregado: ${p.nombre}")
+    }
+
+    fun cantidadProductos(): Int = productos.size
+
+    fun calcularSubtotalGeneral(): Double =
+        productos.sumOf { it.calcularSubtotal() }
+
+    // POLIMORFISMO en acción: cada producto de la lista
+    // ejecuta SU PROPIA versión de calcularImpuesto().
+    fun calcularImpuestoGeneral(): Double =
+        productos.sumOf { it.calcularImpuesto() }
+
+    fun calcularTotal(): Double =
+        calcularSubtotalGeneral() + calcularImpuestoGeneral()
+
+    fun mostrarDetalle() {
+        println("--------- DETALLE DEL CARRITO ---------")
+        productos.forEachIndexed { index, p ->
+            println("${index + 1}. ${p.mostrarInfo()}")
+        }
+        println("---------------------------------------")
+    }
+}
