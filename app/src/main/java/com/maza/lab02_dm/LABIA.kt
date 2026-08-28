@@ -50,3 +50,38 @@ fun main() {
     println("=========================================")
     println("Proyecto inicializado correctamente.")
 }
+
+// -------------------------------------------------------
+// HERENCIA: cada clase extiende de Producto y hereda
+// nombre, cantidad, precio y la lógica de subtotal.
+// -------------------------------------------------------
+
+class ProductoElectronico(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val garantiaMeses: Int
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = calcularSubtotal() * 0.18
+}
+
+class ProductoAlimento(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val fechaVencimiento: String
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = 0.0
+}
+
+class ProductoRopa(
+    nombre: String,
+    precio: Double,
+    cantidad: Int,
+    val talla: String
+) : Producto(nombre, precio, cantidad) {
+
+    override fun calcularImpuesto(): Double = calcularSubtotal() * 0.18
+}
