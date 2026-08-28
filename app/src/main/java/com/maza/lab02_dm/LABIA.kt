@@ -49,7 +49,7 @@ fun main() {
     println(" CARRITO DE COMPRAS - TIENDA TECSUP (POO) ")
     println("=========================================")
 
-    val nombreCliente = "Juan Leon"
+    val nombreCliente = "Dario Maza"
     println("Cliente: $nombreCliente")
     println()
 
