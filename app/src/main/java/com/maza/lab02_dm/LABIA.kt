@@ -163,3 +163,21 @@ class Carrito {
         println("---------------------------------------")
     }
 }
+fun calcularDescuento(): Double {
+    val total = calcularTotal()
+    return when {
+        total > 5000 -> total * 0.10
+        total > 3000 -> total * 0.05
+        else -> 0.0
+    }
+}
+
+fun productoMasCaro(): Producto? = productos.maxByOrNull { it.getPrecio() }
+
+fun buscarProducto(nombre: String): Producto? {
+    return productos.find { it.nombre.equals(nombre, ignoreCase = true) }
+}
+
+fun eliminarProducto(nombre: String): Boolean {
+    return productos.removeIf { it.nombre.equals(nombre, ignoreCase = true) }
+}
