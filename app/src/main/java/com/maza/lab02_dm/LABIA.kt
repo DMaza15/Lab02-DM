@@ -48,7 +48,56 @@ fun main() {
     println("=========================================")
     println(" CARRITO DE COMPRAS - TIENDA TECSUP (POO) ")
     println("=========================================")
-    println("Proyecto inicializado correctamente.")
+
+    val nombreCliente = "Juan Leon"
+    println("Cliente: $nombreCliente")
+    println()
+
+    val carrito = Carrito()
+    carrito.agregarProducto(ProductoElectronico("Laptop HP", 2500.0, 1, 12))
+    carrito.agregarProducto(ProductoElectronico("Mouse Logitech", 45.5, 2, 6))
+    carrito.agregarProducto(ProductoAlimento("Chocolate Sublime", 3.5, 5, "2026-12-01"))
+    carrito.agregarProducto(ProductoRopa("Polo Deportivo", 79.9, 3, "M"))
+
+    println()
+    println("Cantidad de productos: ${carrito.cantidadProductos()}")
+    println()
+
+    carrito.mostrarDetalle()
+
+    val subtotal = carrito.calcularSubtotalGeneral()
+    val igv = carrito.calcularImpuestoGeneral()
+    val total = carrito.calcularTotal()
+    val descuento = carrito.calcularDescuento()
+    val totalConDescuento = total - descuento
+
+    println(String.format("Subtotal:             S/ %8.2f", subtotal))
+    println(String.format("IGV:                  S/ %8.2f", igv))
+    println(String.format("TOTAL A PAGAR:        S/ %8.2f", total))
+
+    if (descuento > 0) {
+        println(String.format("Descuento aplicado:  -S/ %8.2f", descuento))
+    } else {
+        println("No se aplico descuento (total <= S/ 3000)")
+    }
+    println(String.format("TOTAL CON DESCUENTO:  S/ %8.2f", totalConDescuento))
+    println()
+
+    val masCaro = carrito.productoMasCaro()
+    if (masCaro != null) {
+        println("Producto mas caro: ${masCaro.nombre} " +
+                String.format("(S/ %.2f)", masCaro.getPrecio()))
+    }
+
+    println()
+    val buscado = carrito.buscarProducto("Mouse Logitech")
+    if (buscado != null) {
+        println("Producto encontrado: ${buscado.nombre}")
+    }
+
+    carrito.eliminarProducto("Mouse Logitech")
+    println("Despues de eliminar 'Mouse Logitech':")
+    carrito.mostrarDetalle()
 }
 
 // -------------------------------------------------------
