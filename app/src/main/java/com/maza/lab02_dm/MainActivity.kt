@@ -31,17 +31,22 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
+fun PantallaRegistro(modifier: Modifier = Modifier) {
+    Column(
         modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    Lab02DMTheme {
-        Greeting("Android")
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text(
+            text = "Nuevo producto",
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Text(
+            text = "Completa los datos y presiona Agregar",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.outline
+        )
+        Spacer(modifier = Modifier.height(24.dp))
+// aquí irán los campos de texto
     }
 }
