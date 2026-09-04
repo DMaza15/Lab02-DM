@@ -13,6 +13,8 @@ var limiteVehiculos: Int = 0
 var listaVehiculos = mutableListOf<RegistroVehiculo>()
 val historialVisitas = mutableMapOf<String, Int>()
 
+const val IGV = 0.18
+
 fun iniciarProcesamiento(cantidad: Int) {
     if (cantidad > 0) {
         limiteVehiculos = cantidad
@@ -72,9 +74,17 @@ fun calcularPago(vehiculo: RegistroVehiculo): Double {
         subtotal *= 0.90
     }
 
-    vehiculo.totalPagado = subtotal
+    // Descuento adicional: si el total supera 500, 20% de descuento
+    if (subtotal > 500) {
+        subtotal *= 0.80
+    }
 
-    return subtotal
+    // Se agrega el IGV peruano (18%)
+    val totalConIGV = subtotal * (1 + IGV)
+
+    vehiculo.totalPagado = totalConIGV
+
+    return totalConIGV
 }
 
 fun mostrarVehiculosRegistrados() {
@@ -91,7 +101,7 @@ fun mostrarVehiculosRegistrados() {
             - Tipo: ${vehiculo.tipo}
             - Horas: ${vehiculo.horas}
             - Frecuente: ${if (vehiculo.esFrecuente) "Sí (10% Dscto)" else "No"}
-            - Total a Pagar: S/ ${String.format("%.2f", vehiculo.totalPagado)}
+            - Total a Pagar (incl. IGV): S/ ${String.format("%.2f", vehiculo.totalPagado)}
             -----------------------------------
         """.trimIndent()
 
