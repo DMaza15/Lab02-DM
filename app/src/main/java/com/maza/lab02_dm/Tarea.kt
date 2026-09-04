@@ -1,9 +1,5 @@
 package com.maza.lab02_dm
 
--------------------------------------------------
-// DATA CLASS
-// Representa un vehículo registrado.
-// ---------------------------------------------------------
 data class RegistroVehiculo(
     val placa: String,
     val tipo: String,
@@ -13,197 +9,98 @@ data class RegistroVehiculo(
     var totalPagado: Double = 0.0
 )
 
-
-// ---------------------------------------------------------
-// VARIABLES GLOBALES
-// ---------------------------------------------------------
 var limiteVehiculos: Int = 0
+var listaVehiculos = mutableListOf<RegistroVehiculo>()
+val historialVisitas = mutableMapOf<String, Int>()
 
-val listaVehiculos =
-    mutableListOf<RegistroVehiculo>()
-
-val historialVisitas =
-    mutableMapOf<String, Int>()
-
-
-// ---------------------------------------------------------
-// INICIAR PROCESAMIENTO
-// ---------------------------------------------------------
 fun iniciarProcesamiento(cantidad: Int) {
-
     if (cantidad > 0) {
-
         limiteVehiculos = cantidad
-
         listaVehiculos.clear()
-
         historialVisitas.clear()
-
-        println("Sistema configurado para $cantidad vehículos.")
     }
 }
 
-
-// ---------------------------------------------------------
-// CALCULAR SI EL CLIENTE ES FRECUENTE
-// ---------------------------------------------------------
 fun calcularSiEsFrecuente(placa: String): Boolean {
+    val visitasAnteriores = historialVisitas.getOrDefault(placa, 0)
+    val visitasActuales = visitasAnteriores + 1
 
-    val visitasAnteriores =
-        historialVisitas.getOrDefault(placa, 0)
-
-    val visitasActuales =
-        visitasAnteriores + 1
-
-    historialVisitas[placa] =
-        visitasActuales
+    historialVisitas[placa] = visitasActuales
 
     return visitasActuales > 1
 }
 
-
-// ---------------------------------------------------------
-// CALCULAR PAGO
-// ---------------------------------------------------------
 fun calcularPago(vehiculo: RegistroVehiculo): Double {
 
     val tarifaBase = when (vehiculo.tipo.lowercase()) {
-
         "moto" -> 2.0
-
         "auto" -> 4.0
-
         "camioneta" -> 10.0
+
+        // NUEVO: Trailer
+        "trailer" -> 20.0
 
         else -> 0.0
     }
 
-
     var subtotal = 0.0
-
     val horas = vehiculo.horas
 
-
-    // -----------------------------------------------------
-    // TRAMO 1
-    // Primeras 2 horas con tarifa normal
-    // -----------------------------------------------------
+    // Tramo 1: 0 a 2 horas
     val horasNormales =
         if (horas > 2) 2 else horas
 
-    subtotal +=
-        horasNormales * tarifaBase
+    subtotal += horasNormales * tarifaBase
 
-
-    // -----------------------------------------------------
-    // TRAMO 2
-    // De la tercera a la quinta hora
-    // Recargo del 20%
-    // -----------------------------------------------------
+    // Tramo 2: De la 3ra a la 5ta hora con 20%
     if (horas > 2) {
 
         val horasCon20 =
-            if (horas > 5) {
-                3
-            } else {
-                horas - 2
-            }
+            if (horas > 5) 3 else horas - 2
 
-        subtotal +=
-            horasCon20 * (tarifaBase * 1.20)
+        subtotal += horasCon20 * (tarifaBase * 1.20)
     }
 
-
-    // -----------------------------------------------------
-    // TRAMO 3
-    // Más de 5 horas
-    // Recargo del 50%
-    // -----------------------------------------------------
+    // Tramo 3: Más de 5 horas con 50%
     if (horas > 5) {
 
-        val horasCon50 =
-            horas - 5
+        val horasCon50 = horas - 5
 
-        subtotal +=
-            horasCon50 * (tarifaBase * 1.50)
+        subtotal += horasCon50 * (tarifaBase * 1.50)
     }
 
-
-    // -----------------------------------------------------
-    // DESCUENTO POR CLIENTE FRECUENTE
-    // -----------------------------------------------------
+    // Descuento para cliente frecuente
     if (vehiculo.esFrecuente) {
-
         subtotal *= 0.90
     }
 
-
-    // Guardamos el total
-    vehiculo.totalPagado =
-        subtotal
+    vehiculo.totalPagado = subtotal
 
     return subtotal
 }
 
-
-// ---------------------------------------------------------
-// MOSTRAR VEHÍCULOS REGISTRADOS
-// ---------------------------------------------------------
 fun mostrarVehiculosRegistrados() {
 
     println()
-    println("======================================")
-    println("      LISTA DE VEHÍCULOS REGISTRADOS")
-    println("======================================")
+    println("=== LISTA DE VEHÍCULOS REGISTRADOS ===")
 
+    for ((index, vehiculo) in listaVehiculos.withIndex()) {
 
-    for ((index, vehiculo)
-    in listaVehiculos.withIndex()) {
+        val datos = """
+            Vehículo ${index + 1}:
+            - Placa: ${vehiculo.placa}
+            - Cliente: ${vehiculo.cliente}
+            - Tipo: ${vehiculo.tipo}
+            - Horas: ${vehiculo.horas}
+            - Frecuente: ${if (vehiculo.esFrecuente) "Sí (10% Dscto)" else "No"}
+            - Total a Pagar: S/ ${String.format("%.2f", vehiculo.totalPagado)}
+            -----------------------------------
+        """.trimIndent()
 
-        println()
-        println("Vehículo ${index + 1}")
-        println("--------------------------------------")
-
-        println(
-            "Placa: ${vehiculo.placa}"
-        )
-
-        println(
-            "Cliente: ${vehiculo.cliente}"
-        )
-
-        println(
-            "Tipo: ${vehiculo.tipo}"
-        )
-
-        println(
-            "Horas: ${vehiculo.horas}"
-        )
-
-        println(
-            "Frecuente: ${
-                if (vehiculo.esFrecuente)
-                    "Sí (10% Dscto)"
-                else
-                    "No"
-            }"
-        )
-
-        println(
-            String.format(
-                "Total a Pagar: S/ %.2f",
-                vehiculo.totalPagado
-            )
-        )
-
-        println("--------------------------------------")
+        println(datos)
     }
 }
 
-
-// ---------------------------------------------------------
-// REGISTRAR VEHÍCULO
-// ---------------------------------------------------------
 fun registrarVehiculo(
     placa: String,
     tipo: String,
@@ -211,120 +108,105 @@ fun registrarVehiculo(
     cliente: String
 ) {
 
-    // Verificar si todavía hay espacio
     if (listaVehiculos.size < limiteVehiculos) {
 
-        // Las horas mínimas son 1
         val horasReales =
-            if (horasIngresadas < 1)
-                1
-            else
-                horasIngresadas
+            if (horasIngresadas < 1) 1 else horasIngresadas
 
-
-        // Verificar si es cliente frecuente
         val esFrecuenteCalculado =
             calcularSiEsFrecuente(placa)
 
-
-        // Crear registro
-        val nuevoRegistro =
-            RegistroVehiculo(
-                placa = placa,
-                tipo = tipo,
-                horas = horasReales,
-                cliente = cliente,
-                esFrecuente = esFrecuenteCalculado
-            )
-
-
-        // Calcular pago
-        calcularPago(nuevoRegistro)
-
-
-        // Agregar a la lista
-        listaVehiculos.add(nuevoRegistro)
-
-
-        println()
-        println(
-            "Vehículo registrado: ${nuevoRegistro.placa}"
+        val nuevoRegistro = RegistroVehiculo(
+            placa = placa,
+            tipo = tipo,
+            horas = horasReales,
+            cliente = cliente,
+            esFrecuente = esFrecuenteCalculado
         )
 
+        calcularPago(nuevoRegistro)
 
-        // Si se llegó al límite, mostrar todos
+        listaVehiculos.add(nuevoRegistro)
+
+        println()
+        println("Vehículo registrado correctamente.")
+
         if (listaVehiculos.size == limiteVehiculos) {
-
             mostrarVehiculosRegistrados()
         }
 
     } else {
-
-        println(
-            "No se pueden registrar más vehículos."
-        )
+        println("No hay espacio para registrar más vehículos.")
     }
 }
 
 
 // =========================================================
 // MAIN
+// Los datos son ingresados por el usuario.
 // =========================================================
+
 fun main() {
 
     println("======================================")
     println("     SISTEMA DE ESTACIONAMIENTO")
     println("======================================")
 
-    println(
-        "Iniciando sistema..."
-    )
+    // Pedir cantidad de vehículos
+    print("Ingrese la cantidad de vehículos a registrar: ")
 
+    val cantidad =
+        readLine()?.toIntOrNull() ?: 0
 
-    // -----------------------------------------------------
-    // 1. Configuramos el límite
-    // -----------------------------------------------------
-    iniciarProcesamiento(3)
+    if (cantidad <= 0) {
+        println("Cantidad inválida.")
+        return
+    }
 
-
-    // -----------------------------------------------------
-    // 2. Registramos un auto
-    // Juan - 4 horas
-    // -----------------------------------------------------
-    registrarVehiculo(
-        "ABC-123",
-        "Auto",
-        4,
-        "Juan Perez"
-    )
-
-
-    // -----------------------------------------------------
-    // 3. Registramos una moto
-    // Maria - 6 horas
-    // -----------------------------------------------------
-    registrarVehiculo(
-        "MOT-099",
-        "Moto",
-        6,
-        "Maria Lopez"
-    )
-
-
-    // -----------------------------------------------------
-    // 4. Registramos nuevamente a Juan
-    // Como es la segunda visita, obtiene 10% de descuento.
-    // -----------------------------------------------------
-    registrarVehiculo(
-        "ABC-123",
-        "Auto",
-        2,
-        "Juan Perez"
-    )
-
+    iniciarProcesamiento(cantidad)
 
     println()
+
+    // Registrar vehículos
+    for (i in 1..cantidad) {
+
+        println("--------------------------------------")
+        println("          VEHÍCULO $i")
+        println("--------------------------------------")
+
+        // Placa
+        print("Ingrese la placa: ")
+        val placa =
+            readLine()?.trim() ?: ""
+
+        // Tipo
+        print("Ingrese el tipo (Moto/Auto/Camioneta/Trailer): ")
+        val tipo =
+            readLine()?.trim() ?: ""
+
+        // Horas
+        print("Ingrese las horas: ")
+        val horas =
+            readLine()?.toIntOrNull() ?: 1
+
+        // Cliente
+        print("Ingrese el nombre del cliente: ")
+        val cliente =
+            readLine()?.trim() ?: ""
+
+        // Registrar
+        registrarVehiculo(
+            placa = placa,
+            tipo = tipo,
+            horasIngresadas = horas,
+            cliente = cliente
+        )
+
+        println()
+    }
+
     println("======================================")
-    println("       PROGRAMA FINALIZADO")
+    println("       REGISTRO FINALIZADO")
     println("======================================")
 }
+
